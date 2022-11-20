@@ -14,8 +14,8 @@ What works
 - Automatic tracing
 
 What does not work:
-- Manual tracing, I think we should be able to reference the Otel libraries provided by the layer though I cannot get this to work with ESBuild
-- Honeycomb does not have the root traces, I think this is because the root traces are coming from (Lambda / APIGW) xray information that is not exported to HNY
+1. Manual tracing, I think we should be able to reference the Otel libraries provided by the layer though I cannot get this to work with ESBuild
+2. Honeycomb does not have the root traces, I think this is because the root traces are coming from (Lambda / APIGW) xray information that is not exported to HNY
 
 To deploy:
 - npm install
@@ -26,6 +26,12 @@ To deploy:
 Attempts to get extensions working:
 - ❌ Deploying our own OTEL libraries, and setting specifying the exporter as localhost -- Does not appear to send any data to HNY
 - ⚠️ Excluding our own OTEL Libraries (depending on the layer) -- ESBuild does not appear to allow us to reference those libraries (there might be a way you are meant to do this with layers?)
+
+**Comparisons**
+
+[opentelemetry-lambda](https://github.com/open-telemetry/opentelemetry-lambda) vs [opentelemetry-lambda](aws-otel-lambda)[https://github.com/aws-observability/aws-otel-lambda/] 
+
+
 
 ## Information
 
