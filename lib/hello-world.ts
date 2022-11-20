@@ -30,23 +30,16 @@ export class HelloWorld extends Construct {
         tracing: lambda.Tracing.ACTIVE,
         bundling: {
             nodeModules: [
-
-
                 // Turns https spans into secrets manager spans?
                 '@aws-sdk/client-secrets-manager',
-            ],
 
-            externalModules: [
-                // Required for 2 reasons
-                //  - Fixes an issue with '@opentelemetry/sdk-node' -> thriftrw -> bufrw throwing an error on function initialization
-                //  - OTEL does not work if `sdk-node` and `auto-instrumentations-node` are not included                
+                //  - Fixes an issue with '@opentelemetry/sdk-node' -> thriftrw -> bufrw throwing an error on function initialization              
                 '@opentelemetry/api',
                 '@opentelemetry/sdk-node',
                 '@opentelemetry/auto-instrumentations-node',
                 '@opentelemetry/exporter-trace-otlp-proto',
-                '@opentelemetry/exporter-trace-otlp-http',
+                '@opentelemetry/exporter-trace-otlp-http',                
             ],
-
             commandHooks: {
                 beforeBundling(inputDir: string, outputDir: string): string[] {
                   return [`cp ${inputDir}/collector.yaml ${outputDir}`]
