@@ -31,20 +31,22 @@ Attempts to get extensions working:
 
 Useful Repos repo:
 
-- https://github.com/aws-observability/aws-otel-lambda
-- https://github.com/open-telemetry/opentelemetry-lambda/ (Auto intrum layer)
-- https://github.com/open-telemetry/opentelemetry-js-contrib
+- https://github.com/open-telemetry/opentelemetry-js-contrib -- OTel JS
+- https://github.com/aws-observability/aws-otel-lambda -- the layer we're using
+- https://github.com/open-telemetry/opentelemetry-lambda/ -- lambda layer OTEL provides
 
-Github issues:
-- https://github.com/open-telemetry/opentelemetry-js-contrib/issues/647#issuecomment-982258484
-- https://github.com/aws-observability/aws-otel-lambda/issues/228 (localhost export) <- Here
+Relevant Github issues:
+
+- https://github.com/open-telemetry/opentelemetry-js-contrib/issues/647#issuecomment-982258484 -- Example of someone using CDK ESBuild to work with OTel (they must be referencing the layers' otel library because they're 'externalModules')
+- https://github.com/open-telemetry/opentelemetry-js-contrib/issues/647#issuecomment-1006213667 ESbuild examples (have not tried this yet)
+- https://github.com/aws-observability/aws-otel-lambda/issues/228 (examples of of the opentelmetry library working, though there's a large performance impact)
 
 Manual Instrumentation:
 
 - https://aws-otel.github.io/docs/getting-started/js-sdk/trace-manual-instr <- Here
 
 
-More places:
+More places for information:
 - Honeycomb otel slack
 - Honeycomb-opentelemetry-node -- https://honeycombpollinators.slack.com/archives/CNQ943Q75/p1668617521349559?thread_ts=1668606347.932139&cid=CNQ943Q75
 

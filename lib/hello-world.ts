@@ -29,6 +29,7 @@ export class HelloWorld extends Construct {
         // Gives us basic automatic node tracing, though root span is missing
         tracing: lambda.Tracing.ACTIVE,
         bundling: {
+            keepNames: true,
             nodeModules: [
                 // Turns https spans into secrets manager spans?
                 '@aws-sdk/client-secrets-manager',
