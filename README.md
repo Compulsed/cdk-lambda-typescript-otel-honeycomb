@@ -1,5 +1,7 @@
 # Cdk lambda Typescript OTEL Honeycomb
 
+[Blog post explaining this project](https://dalejsalter.com/post/8afd46ad-7da2-4b2a-9cb5-9e5ae4fe6cc2)
+
 **Purpose:**
 
 This project is meant to demonstrate how to export (automatic + manual) traces from lambda to honeycomb. The reason we cannot just use standard library (@opentelemetry/api) / exporter (and why we must use a layer) is because lambda does not flush the traces after an invoke. This will lead to missing telemetry data.
