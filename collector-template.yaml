@@ -1,7 +1,6 @@
 # Docs - https://docs.honeycomb.io/getting-data-in/otel-collector/
 receivers:
   otlp:
-    # gprc 4317 / http 4318
     protocols:
       grpc:
       http: 

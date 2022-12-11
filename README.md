@@ -2,62 +2,23 @@
 
 **Purpose:**
 
-This project is meant to demonstrate how to export (automatic + manual) traces from lambda to honeycomb. The reason we cannot just use standard exporter (and why we must use a layer) is because lambda does not flush the traces after an invoke. 
+This project is meant to demonstrate how to export (automatic + manual) traces from lambda to honeycomb. The reason we cannot just use standard exporter (and why we must use a layer) is because lambda does not flush the traces after an invoke. This leads to missing traces
 
-There are multiple ways reliably get traces from Lambda to OTEL services:
-- Use cloudwatch logs as a transport and then have a lambda subscription subscribe to the log stream
-- Use lambda extensions and a lambda layer -- this is what this demo project is meant to show
+![Example Trace](./images/trace.png)
 
-**Project status**
+**Set-up**
 
-What works
-- Automatic tracing
+1. Update `collector-template.yaml`'s xxx to your API Key from Honeycomb
+1. `npm install` -- Installs dependencies
+1. `npx cdk deploy` -- Deploys the stack NOTE: Must use us-east-1 as this is where the layer is
+1. Review honeycomb, your traces should be present
 
-What does not work:
-1. Manual tracing, I think we should be able to reference the Otel libraries provided by the layer though I cannot get this to work with ESBuild
-2. Honeycomb does not have the root traces, I think this is because the root traces are coming from (Lambda / APIGW) xray information that is not exported to HNY
+**Why is this so hard to setup?**
 
-To deploy:
-- npm install
-- Move `collector-template.yaml` to `collector.yaml`
-- Replace xxx with honeycomb keys
-- `npx cdk deploy`
+There are comments throughout the code which describes why each section is required. I think the reason that this is so hard to configure is that we are relying on an AWS extension to export data to a 3rd party (Honeycomb) AND we need to ensure that ESBuild (what CDK uses to compile TS Lambdas) to correctly layout our code for instrumentation.
 
-Attempts to get extensions working:
-- ❌ Deploying our own OTEL libraries, and setting specifying the exporter as localhost -- Does not appear to send any data to HNY
-- ⚠️ Excluding our own OTEL Libraries (depending on the layer) -- ESBuild does not appear to allow us to reference those libraries (there might be a way you are meant to do this with layers?)
+**TODO:**
 
-**Comparisons**
-
-[opentelemetry-lambda](https://github.com/open-telemetry/opentelemetry-lambda) vs [opentelemetry-lambda](aws-otel-lambda)[https://github.com/aws-observability/aws-otel-lambda/] 
-
-
-
-## Information
-
-Useful Repos repo:
-
-- https://github.com/open-telemetry/opentelemetry-js-contrib -- OTel JS
-- https://github.com/aws-observability/aws-otel-lambda -- the layer we're using
-- https://github.com/open-telemetry/opentelemetry-lambda/ -- lambda layer OTEL provides
-
-Relevant Github issues:
-
-- https://github.com/open-telemetry/opentelemetry-js-contrib/issues/647#issuecomment-982258484 -- Example of someone using CDK ESBuild to work with OTel (they must be referencing the layers' otel library because they're 'externalModules')
-- https://github.com/open-telemetry/opentelemetry-js-contrib/issues/647#issuecomment-1006213667 ESbuild examples (have not tried this yet)
-- https://github.com/aws-observability/aws-otel-lambda/issues/228 (examples of of the opentelmetry library working, though there's a large performance impact)
-
-Manual Instrumentation:
-
-- https://aws-otel.github.io/docs/getting-started/js-sdk/trace-manual-instr <- Here
-
-
-More places for information:
-- Honeycomb otel slack
-- Honeycomb-opentelemetry-node -- https://honeycombpollinators.slack.com/archives/CNQ943Q75/p1668617521349559?thread_ts=1668606347.932139&cid=CNQ943Q75
-
-
-Guides:
-- https://opentelemetry.io/docs/instrumentation/js/getting-started/nodejs/
-- https://opentelemetry.io/docs/instrumentation/js/instrumentation/
-- https://docs.honeycomb.io/getting-data-in/opentelemetry/javascript/ (best doc?)
+- startActiveSpan types (decorator)
+- Add types to OTel (difficult due to require rather an import)
+- Update the layer to pull from deployment region

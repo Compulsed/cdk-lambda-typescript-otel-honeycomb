@@ -1,42 +1,56 @@
-
-import * as opentelemetry from "@opentelemetry/sdk-node";
-import { getNodeAutoInstrumentations } from "@opentelemetry/auto-instrumentations-node";
-import { trace, diag, DiagConsoleLogger, DiagLogLevel } from '@opentelemetry/api';
-import { OTLPTraceExporter } from '@opentelemetry/exporter-trace-otlp-http';
-
-diag.setLogger(new DiagConsoleLogger(), DiagLogLevel.INFO);
-
-const sdk = new opentelemetry.NodeSDK({
-  // optional - default url is http://localhost:4318/v1/traces
-  traceExporter: new OTLPTraceExporter({}),
-  instrumentations: [getNodeAutoInstrumentations()]
-});
-
-sdk.start()
-
-const tracer = trace.getTracer('my-service-tracer')
-
 import { Context, APIGatewayProxyResult, APIGatewayEvent } from 'aws-lambda';
-import { GetSecretValueCommand, SecretsManagerClient } from '@aws-sdk/client-secrets-manager'
+import { DynamoDBDocumentClient, GetCommand, PutCommand } from "@aws-sdk/lib-dynamodb";
+import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
+
+// Must use require as we are using the `opentelemetry` provided by the layer
+//  We lose types by doing this, TODO: try and re-attach types
+const api = require('@opentelemetry/api')
+const tracer = api.trace.getTracer('my-service-tracer')
+
+const ddbClient = new DynamoDBClient({});
+const ddbDocClient = DynamoDBDocumentClient.from(ddbClient);
+
+const COUNTER_KEY = 'counter'
 
 const handler = async (event: APIGatewayEvent, context: Context): Promise<APIGatewayProxyResult> => {
     console.log(`Event: ${JSON.stringify(event, null, 2)}`);
     console.log(`Context: ${JSON.stringify(context, null, 2)}`);
 
-    return tracer.startActiveSpan('custom-handler', async (span) => {
-        const secretsManagerClient = new SecretsManagerClient({ region: 'us-east-1' })
+    return tracer.startActiveSpan('handler', { root: true }, async (span: any) => {
+        let count = 0
+        
+        try {
+            const data = await ddbDocClient.send(new GetCommand({
+                TableName: process.env.DDB_TABLE_NAME,
+                Key: {
+                    id: COUNTER_KEY
+                }
+            }));
 
-        const command = new GetSecretValueCommand({
-            SecretId: 'DbClusterSecret9A4B0D5E-u27xQsOk1a4V',
-        })
+            count = data?.Item?.count || 0
+        } catch (err) {
+            // TODO: Specifically handle not found
+            span.recordException(err);
+        }
 
-        const secret = await secretsManagerClient.send(command)
+        ++count
+
+        try {
+            await ddbDocClient.send(new PutCommand({
+                TableName: process.env.DDB_TABLE_NAME,
+                Item: {
+                    id: COUNTER_KEY,
+                    count
+                }
+            }));
+        } catch (err) {
+            span.recordException(err);
+        }
 
         const response =  {
             statusCode: 200,
             body: JSON.stringify({
-                message: 'hello world',
-                secret: JSON.stringify({ secret }, null, 2)
+                count,
             }),
         };
 
@@ -46,4 +60,5 @@ const handler = async (event: APIGatewayEvent, context: Context): Promise<APIGat
     })
 };
 
+// Must export via handler, required due to otel manipulates entry point
 module.exports = { handler }
