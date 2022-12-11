@@ -41,7 +41,7 @@ export class HelloWorld extends Construct {
             'arn:aws:lambda:us-east-1:901920570463:layer:aws-otel-nodejs-arm64-ver-1-7-0:2'
           ),
         ],
-        // Ignores AWS OTEL traces
+        // Ignores AWS Lambda services' OTEL traces
         tracing: lambda.Tracing.PASS_THROUGH,
         bundling: {
             keepNames: true,
