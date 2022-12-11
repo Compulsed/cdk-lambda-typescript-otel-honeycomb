@@ -1,4 +1,4 @@
-# Serverless CDK Otel
+# Cdk lambda Typescript OTEL Honeycomb
 
 **Purpose:**
 
