@@ -26,8 +26,13 @@ Getting AWS' Lambda layer to work CDK + Honeycomb is hard.
 
 This demo project is a reference for the simplest possible set up. Review the /lib directory for changes you will need to make to your application.
 
-**Improvements to this project**
+**Additional benefits to the project**
 
-- startActiveSpan types (decorator)
-- Add types to OTel (difficult due to require rather an import)
-- Update the layer to pull from deployment region
+- Provides a TYPED decorator style function (spanify) to reduce nesting from `startActiveSpan`
+    - Spanify provides a sane default exception handling
+- Adds TS typing back to the `@opentelemetry/api` methods
+
+**Todo improvements to the project**
+
+- Push traces to honeycomb when lambda code is run locally (this will require a different codepath that calls a local version of `@opentelemetry/api`)
+- Remove us-east-1 from the layer and pull the region from CDK
