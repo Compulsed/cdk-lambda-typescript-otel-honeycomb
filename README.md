@@ -4,7 +4,7 @@
 
 This project is meant to demonstrate how to export (automatic + manual) traces from lambda to honeycomb. The reason we cannot just use standard library (@opentelemetry/api) / exporter (and why we must use a layer) is because lambda does not flush the traces after an invoke. This will lead to missing telemetry data.
 
-![Example Trace](./images/trace.png)
+![Example Trace](./images/trace-1.png)
 
 **Why does this demo project exist?**
 
