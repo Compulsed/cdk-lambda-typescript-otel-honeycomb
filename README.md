@@ -8,9 +8,11 @@ This project is meant to demonstrate how to export (automatic + manual) traces f
 
 **Set-up**
 
-1. Update `collector-template.yaml`'s xxx to your API Key from Honeycomb
+1. Copy + Paste `collector-template.yaml` to `collector.yaml`
+1. Replace `xxx` in `collector.yaml` to your honeycomb keys
 1. `npm install` -- Installs dependencies
 1. `npx cdk deploy` -- Deploys the stack NOTE: Must use us-east-1 as this is where the layer is
+1. Hit the URL that CDK outputs from the deployment. You should see a counter
 1. Review honeycomb, your traces should be present
 
 **Why is this so hard to setup?**
