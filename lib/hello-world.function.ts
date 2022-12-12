@@ -104,4 +104,5 @@ const handler = async (event: APIGatewayEvent, context: Context): Promise<APIGat
 };
 
 // Must export via handler, required due to otel manipulating lambda entry point
+//  https://github.com/open-telemetry/opentelemetry-js/issues/1946
 module.exports = { handler }
